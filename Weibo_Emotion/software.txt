@@ -1,0 +1,8 @@
+php5 php5-curl
+apache2
+php libapache2-mod-php
+
+installed: php-mysql php-curl php-gd php-intl php-pear php-imagick php-imap php-mcrypt php-memcache php-pspell php-recode php-snmp php-sqlite3 php-tidy php-xmlrpc php-xsl php-memcache 
+fail:php5-ming php-ps
+
+phpmyadmin

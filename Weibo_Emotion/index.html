@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>微博情感分析</title>
+	<script src="https://www.gstatic.com/charts/loader.js"></script>
+	<script>
+		//引入谷歌可视化库和 corechart 库
+		//调用了 google.charts.load 函数
+		google.charts.load('current', {
+			'packages': ['corechart']
+		});
+		//当谷歌可视化库加载完成以后，设置一个回调函数
+		google.charts.setOnLoadCallback(drawChart);
+		//通过回调函数，创建并填充一个数据表
+		//实例化一个饼图并绘制
+		function drawChart() {
+			//获取 textarea 框中的文本
+			var text = document.getElementById("text").value;
+			//使用 jQuery 的 $.post 方法可以以 POST 形式向服务器发起 AJAX 请求
+			$.post('./qcloudapi-sdk-php/demo.php', {
+				'text': text
+			}, function(data) {
+				//利用 jQuery.parseJSON() 函数将服务器后端返回的 json 字符串转为与之对应的 javaScript 对象
+				var obj = jQuery.parseJSON(data);
+				positive = obj.positive;
+				negative = obj.negative;
+				//创建一个数据表，使用 google.visualization.arrayToDataTable 类
+				var data = google.visualization.arrayToDataTable([
+					['情绪', 'Percentage'],
+					['正面', positive],
+					['负面', negative]
+				]);
+				//设置 chart 参数,如标题...
+				var options = {
+					title: '情绪'
+				};
+				//实例化并绘制图表
+				var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+				chart.draw(data, options);
+			});
+		}
+	</script>
+	<script src="./bootstrap/js/jquery.min.js"></script>
+	<script src="./bootstrap/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <header></header>
+        <div class="panel panel-primary" style="width:100%;margin-left:auto;margin-right:auto;">
+            <div class="panel-body">
+                <legend>基于新浪微博的情感分析</legend>
+                <form class="form-horizontal" action="" method="post">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">微博</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="3" name="text" id="text">
+							<?php echo $filename;?>
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input type="button" class="btn btn-default" value="分析" onclick="drawChart()"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="piechart" style="width: 900px; height: 500px;">
+        </div>
+    </div>
+</body>
+</html>
